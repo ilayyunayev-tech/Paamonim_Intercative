@@ -1,0 +1,435 @@
+
+
+<!-- SNAP LOADING -->
+<div class="snap-overlay" id="snap-overlay">
+  <div class="spin"></div>
+  <span>מכין תמונה לשיתוף...</span>
+</div>
+
+<!-- NAV -->
+<div class="top-nav" dir="rtl">
+  <button class="menu-toggle" id="menu-toggle" type="button" aria-label="פתח תפריט ניווט">☰</button>
+  <a class="brand-center brand-center-link" href="#/wants-vs-needs" aria-label="מעבר למסך הראשי">פעמונים</a>
+  <img class="brand-logo" src="./assets/branding/new_logo.png" alt="לוגו פעמונים"/>
+</div>
+<div class="menu-overlay" id="menu-overlay"></div>
+<nav class="hamburger-nav" id="hamburger-nav" aria-label="ניווט בין עמודים">
+  <h3>📚 עמודים</h3>
+  <a href="#/wants-vs-needs">רצונות מול צרכים</a>
+  <a href="#/compound-savings-investment-age">ריבית דריבית - חיסכון - השקעה (מבוסס גיל)</a>
+  <a href="#/index-investing">השקעה במדדים</a>
+  <a href="#/ikigai-personality-onboarding">איקיאגי + שאלון אישיות</a>
+  <a href="#/cv-template-israeli">עבודה: פורמט קורות חיים לדוגמה (ישראל ישראלי)</a>
+</nav>
+
+<!-- ACCESSIBILITY -->
+<button class="a11y-fab" id="a11y-fab" type="button" aria-label="פתח סרגל נגישות">♿</button>
+<section class="a11y-panel" id="a11y-panel" aria-label="סרגל נגישות">
+  <div class="a11y-head">
+    <strong>סרגל נגישות</strong>
+    <button class="a11y-btn" id="a11y-close" type="button" aria-label="סגור סרגל נגישות">סגור</button>
+  </div>
+  <div class="a11y-actions">
+    <button class="a11y-btn" id="a11y-font">A+ הגדלת טקסט</button>
+    <button class="a11y-btn" id="a11y-contrast">ניגודיות גבוהה</button>
+    <button class="a11y-btn" id="a11y-underline">הדגשת קישורים</button>
+    <button class="a11y-btn" id="a11y-readable">פונט קריא</button>
+    <button class="a11y-btn" id="a11y-motion">עצירת אנימציות</button>
+  </div>
+  <div class="a11y-foot">
+    <button class="a11y-btn" id="a11y-reset">איפוס</button>
+  </div>
+</section>
+
+<section class="app-page" id="page-wants-vs-needs">
+<!-- ═══ HEADER ══════════════════════════════ -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-badge">🔔 פעמונים &nbsp;·&nbsp; חינוך פיננסי</div>
+    <h1>רצונות מול <span>צרכים</span></h1>
+    <p>גלה מה באמת חשוב לך, כמה זה עולה, ומתי תוכל להגיע לשם</p>
+  </div>
+</div>
+
+<!-- ═══ SALARY BAR (sticky) ═════════════════ -->
+<div class="salary-bar">
+  <div class="salary-label">💵 משכורת חודשית</div>
+  <div class="salary-input-wrap">
+    <span class="salary-currency">₪</span>
+    <input class="salary-input" type="number" id="salary" value="8000" min="0" step="100" oninput="recalc()"/>
+  </div>
+  <div class="budget-badges" id="budget-badges"></div>
+</div>
+
+<!-- ═══ PAGE CONTENT ════════════════════════ -->
+<div class="page-wrap">
+
+  <!-- PANELS GRID -->
+  <div class="panels-grid">
+
+    <!-- NEEDS -->
+    <div class="card card-needs">
+      <div class="card-header">
+        <h2>🏠 צרכים</h2>
+        <span class="chip" id="needs-total">₪0</span>
+      </div>
+      <div class="card-body">
+        <div class="items-list" id="needs-list"></div>
+      </div>
+      <div class="card-footer">
+        <div class="add-row">
+          <button class="emoji-trigger" id="need-emoji-btn" onclick="togglePicker('need')">🏠</button>
+          <input class="add-input add-input-name" id="add-need-name" placeholder="שם הצורך..."/>
+          <input class="add-input add-input-amount" id="add-need-amount" type="number" placeholder="₪" min="0"/>
+          <button class="add-cta add-cta-need" onclick="addItem('need')">+ הוסף</button>
+        </div>
+        <div class="emoji-picker" id="emoji-picker-need"></div>
+      </div>
+    </div>
+
+    <!-- WANTS -->
+    <div class="card card-wants">
+      <div class="card-header">
+        <h2>🌟 רצונות</h2>
+        <span class="chip" id="wants-total">₪0</span>
+      </div>
+      <div class="card-body">
+        <div class="items-list" id="wants-list"></div>
+      </div>
+      <div class="card-footer">
+        <div class="add-row">
+          <button class="emoji-trigger" id="want-emoji-btn" onclick="togglePicker('want')">🌟</button>
+          <input class="add-input add-input-name" id="add-want-name" placeholder="שם הרצון..."/>
+          <input class="add-input add-input-amount" id="add-want-amount" type="number" placeholder="₪" min="0"/>
+          <button class="add-cta add-cta-want" onclick="addItem('want')">+ הוסף</button>
+        </div>
+        <div class="emoji-picker" id="emoji-picker-want"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVINGS -->
+  <div class="card">
+    <div class="savings-card">
+      <div class="savings-header">
+        <h2>💾 שיעור חיסכון חודשי</h2>
+        <div class="savings-pct-display"><span id="savings-pct">20</span>%</div>
+      </div>
+      <div class="slider-track">
+        <div class="slider-fill" id="slider-fill" style="width:33.3%"></div>
+        <input type="range" class="main-slider" id="savings-slider" min="0" max="60" value="20" step="1" oninput="onSlider(this.value)"/>
+      </div>
+      <div class="slider-labels"><span>0%</span><span>30%</span><span>60%</span></div>
+      <div class="savings-summary" id="savings-summary"></div>
+    </div>
+  </div>
+
+  <!-- BAR -->
+  <div class="card">
+    <div class="bar-card">
+      <h2>📊 לאן הולך הכסף?</h2>
+      <div class="budget-bar">
+        <div class="bar-seg seg-needs"   id="seg-needs"></div>
+        <div class="bar-seg seg-savings" id="seg-savings"></div>
+        <div class="bar-seg seg-wants"   id="seg-wants"></div>
+        <div class="bar-seg seg-free"    id="seg-free"></div>
+      </div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#22C55E"></div>צרכים</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--purple)"></div>חיסכון</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--orange)"></div>רצונות (שוטף)</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#CBD5E1"></div>פנוי</div>
+      </div>
+      <div id="bar-alert"></div>
+    </div>
+  </div>
+
+  <!-- SIMULATOR -->
+  <div class="card" id="sim-panel">
+    <div class="sim-card">
+      <div class="cap-header" id="cap-header">🎯 סימולטור — כמה זמן עד לרצון שלי? | פעמונים</div>
+      <div class="sim-top">
+        <h2>🎯 סימולטור — כמה זמן עד לרצון שלי?</h2>
+      </div>
+      <p class="sub">מחושב לפי: משכורת − צרכים − חיסכון = כסף פנוי. הזז את הסרגל בכל כרטיס לראות מה אם תחסוך יותר!</p>
+      <div class="sim-grid" id="sim-grid"></div>
+      <div class="cap-footer" id="cap-footer">נוצר עם 💰 רצונות מול צרכים · פעמונים</div>
+    </div>
+  </div>
+
+  <!-- SHARE -->
+  <div class="card">
+    <div style="padding:20px 26px">
+      <div style="font-size:16px;font-weight:800;color:var(--primary-dark);margin-bottom:14px;display:flex;align-items:center;gap:8px">📤 שתף את התכנון שלך</div>
+      <div class="share-bar">
+        <button class="share-btn btn-wa" onclick="shareWA()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          שתף אתר בווטסאפ
+        </button>
+        <button class="share-btn btn-img" onclick="shareImage()">📸 שתף תמונה</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+</section>
+
+<section class="app-page page-shell" id="page-compound-savings-investment-age" hidden>
+  <div class="compound-wrap">
+    <div class="compound-hero"> <br /> <br />
+      <h2>לאן נעלם הכסף?</h2>
+      <p>מה היה קורה אם החלטה חודשית קטנה היתה מתחילה מוקדם יותר?</p>
+    </div>
+
+    <div class="compound-grid">
+      <div class="compound-card">
+        <div class="compound-title">על מי נרצה לבדוק?</div>
+        <div class="field-row">
+          <div class="field">
+            <label for="cmp-person-name">שם</label>
+            <input id="cmp-person-name" type="text" placeholder="אמא"/>
+          </div>
+          <div class="field">
+            <label for="cmp-current-age">גיל נוכחי</label>
+            <input id="cmp-current-age" type="number" min="22" max="80" value="45"/>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="compound-title" style="font-size:14px;margin-bottom:8px">איך המצב הכלכלי שלו מרגיש לך היום?</div>
+          <div class="status-chips" id="cmp-status-chips">
+            <button class="status-chip active" data-status="struggling">😟 מתקשה כלכלית</button>
+            <button class="status-chip" data-status="managing">😐 מסתדר</button>
+            <button class="status-chip" data-status="good">🙂 טוב</button>
+            <button class="status-chip" data-status="great">😎 מצוין</button>
+          </div>
+          <div class="micro-copy" id="cmp-status-copy">זה מה שאתה מרגיש לגבי המצב שלו היום.</div>
+        </div>
+      </div>
+
+      <div class="compound-card">
+        <div class="compound-title">שולטים בתרחיש בזמן אמת</div>
+        <div class="range-box">
+          <div class="range-top"><span>כמה בערך הוא מרוויח בחודש?</span><span id="cmp-income-label">₪15,000</span></div>
+          <input class="range-input" id="cmp-income" type="range" min="4000" max="300000" value="15000" step="500"/>
+        </div>
+        <div class="range-box">
+          <div class="range-top"><span>כמה הוא מצליח לשים בצד כל חודש?</span><span id="cmp-saving-rate-label">10%</span></div>
+          <input class="range-input" id="cmp-saving-rate" type="range" min="0" max="30" value="10" step="1"/>
+          <div class="micro-copy" id="cmp-saving-amount-label">כלומר: ₪1,500 בחודש</div>
+        </div>
+        <div class="range-box">
+          <div class="range-top"><span>תשואה שנתית ממוצעת (לימודית)</span><span id="cmp-return-label">7%</span></div>
+          <input class="range-input" id="cmp-return" type="range" min="0" max="10" value="7" step="0.5"/>
+        </div>
+        <div class="range-box">
+          <div class="range-top"><span>מתי הוא התחיל?</span><span id="cmp-start-age-label">22</span></div>
+          <input class="range-input" id="cmp-start-age" type="range" min="14" max="45" value="22" step="1"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="compound-card">
+      <div class="compound-title">אם <span id="cmp-title-name">אדם קרוב</span> התחיל/ה לחסוך מוקדם יותר...</div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="val" id="cmp-kpi-contrib">₪0</div><div class="lbl">הופקד בפועל</div></div>
+        <div class="kpi"><div class="val" id="cmp-kpi-final">₪0</div><div class="lbl">שווי מצטבר היום</div></div>
+        <div class="kpi"><div class="val" id="cmp-kpi-growth">₪0</div><div class="lbl">מתוך זה, הצמיחה יצרה</div></div>
+      </div>
+      <div class="split">
+        <div class="split-side split-left">
+          <h4>מה שקרה בפועל</h4>
+          <div class="big" id="cmp-actual-value">₪0</div>
+          <p>זה בערך מה שיש לו היום.</p>
+        </div>
+        <div class="split-side split-right">
+          <h4>מה היה יכול להיות</h4>
+          <div class="big" id="cmp-potential-value">₪0</div>
+          <p id="cmp-potential-copy">אם היה שם 10% בצד מגיל 22...</p>
+        </div>
+      </div>
+      <div class="gap-box">
+        <div>הפרש בין שני המסלולים</div>
+        <strong id="cmp-gap">₪0</strong>
+        <div>החלטות קטנות מצטברות לאורך זמן.</div>
+      </div>
+
+      <div class="timeline-shell">
+        <div class="timeline-meta"><span>שנה גיל</span><span id="cmp-timeline-age-label">גיל 22</span></div>
+        <input id="cmp-timeline-age" class="timeline-range" type="range" min="22" max="45" value="22" step="1"/>
+        <div class="micro-copy" id="cmp-timeline-balance">בגיל הזה הסכום המשוער היה: ₪0</div>
+        <div class="milestones" id="cmp-milestones"></div>
+      </div>
+
+      <div class="insight" id="cmp-insight"></div>
+      <div class="story-box" id="cmp-story">אם אדם קרוב היה מתחיל בגיל 22, היום היו יכולים להיות לו ₪0.</div>
+    </div>
+
+    <div class="now-you">
+      <div class="compound-title">ועכשיו אתה</div>
+      <p style="color:var(--text-muted)">לא מאוחר להתחיל. גם סכום קטן וקבוע יכול לשנות את העתיד.</p>
+      <div class="field-row" style="margin-top:10px">
+        <div class="field">
+          <label for="cmp-user-age">הגיל שלך</label>
+          <input id="cmp-user-age" type="number" min="14" max="70" value="22"/>
+        </div>
+        <div class="field">
+          <label for="cmp-user-monthly">כמה אפשר לשים בצד בחודש?</label>
+          <input id="cmp-user-monthly" type="number" min="0" max="20000" value="800"/>
+        </div>
+      </div>
+      <div class="target-chips" id="cmp-target-chips">
+        <span class="micro-copy" style="width:100%">עד איזה גיל לחשב עבורך?</span>
+        <button class="target-chip active" data-target-age="30">עד גיל 30</button>
+        <button class="target-chip" data-target-age="35">עד גיל 35</button>
+        <button class="target-chip" data-target-age="40">עד גיל 40</button>
+      </div>
+      <div class="story-box" id="cmp-user-story" style="margin-top:10px">אם תתחיל עכשיו עם ₪800 בחודש, בגיל 30 יכולים להיות לך ₪0.</div>
+      <div class="disclaimer">הכלי מציג הדגמה לימודית בלבד. הוא לא מבטיח תשואה ולא ממליץ על מוצר פיננסי.</div>
+    </div>
+  </div>
+</section>
+
+<section class="app-page page-shell" id="page-index-investing" hidden>
+  <div class="index-wrap">
+    <div class="index-hero"> <br /> <br />
+      <h2>תיק השקעות - ניסיון ראשון</h2>
+      <p>שמים כסף, הזמן עובר, ולומדים מה קורה בדרך. בלי מסחר אמיתי ובלי הבטחות.</p>
+    </div>
+
+    <div class="portfolio-card">
+      <div class="portfolio-top">
+        <div>
+          <div class="portfolio-title">💼 התיק שלך</div>
+          <div style="color:var(--text-muted);font-size:13px">למידה דרך תרגול: זמן, תנודתיות ומגמה.</div>
+        </div>
+        <button id="idx-reset-btn" class="pill-btn reset" type="button">אפס תיק</button>
+      </div>
+      <div class="portfolio-kpis">
+        <div class="ikpi"><div class="ikpi-val" id="idx-kpi-value">₪0</div><div class="ikpi-lbl">שווי נוכחי</div></div>
+        <div class="ikpi"><div class="ikpi-val" id="idx-kpi-pl">₪0</div><div class="ikpi-lbl">רווח/הפסד</div></div>
+        <div class="ikpi"><div class="ikpi-val" id="idx-kpi-cash">₪0</div><div class="ikpi-lbl">מזומן זמין</div></div>
+      </div>
+    </div>
+
+    <div class="time-card">
+      <div class="section-title">⏩ דלג קדימה בזמן</div>
+      <div class="time-actions">
+        <button class="pill-btn skip" type="button" data-skip-years="1">שנה</button>
+        <button class="pill-btn skip" type="button" data-skip-years="3">3 שנים</button>
+        <button class="pill-btn skip" type="button" data-skip-years="5">5 שנים</button>
+        <button class="pill-btn skip" type="button" data-skip-years="10">10 שנים</button>
+        <button class="pill-btn ghost" id="idx-no-touch-btn" type="button">מה היה קורה אם לא היית נוגע בתיק?</button>
+      </div>
+      <div class="time-summary" id="idx-time-summary">
+        התחלת עם: ₪10,000 · עכשיו: ₪10,000 · רווח: ₪0
+      </div>
+      <div class="time-summary" id="idx-compare-summary">
+        אם הכסף היה גדל בקצב ממוצע של 7%: ₪10,000
+      </div>
+      <div class="edu-msg" id="idx-edu-msg">בטווח קצר יש גם ירידות - וזה חלק מהדרך.</div>
+    </div>
+
+    <div class="asset-grid" id="idx-asset-grid"></div>
+
+    <div class="holdings-card">
+      <div class="section-title">אחזקות בתיק</div>
+      <div style="overflow:auto">
+        <table class="holdings-table">
+          <thead>
+            <tr><th>נכס</th><th>כמות</th><th>מחיר קנייה</th><th>מחיר נוכחי</th><th>רווח</th></tr>
+          </thead>
+          <tbody id="idx-holdings-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="disclaimer">הכלי נועד להדגמה בלבד. אין כאן המלצה להשקעה או שימוש בכסף אמיתי.</div>
+  </div>
+</section>
+
+<div id="index-trade-modal" aria-hidden="true">
+  <div class="modal-card">
+    <div class="modal-title" id="idx-modal-title">פעולה</div>
+    <div class="field">
+      <label for="idx-modal-amount">כמה להשקיע / למכור (₪)</label>
+      <input id="idx-modal-amount" type="number" min="0" step="1" value="1000"/>
+    </div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px" id="idx-modal-preview">ייווצרו 0 יחידות.</div>
+    <div class="modal-actions">
+      <button type="button" class="pill-btn ghost" id="idx-modal-cancel">ביטול</button>
+      <button type="button" class="pill-btn skip" id="idx-modal-confirm">אשר פעולה</button>
+    </div>
+  </div>
+</div>
+
+<section class="app-page page-shell" id="page-ikigai-personality-onboarding" hidden>
+  <div class="ikg-root" id="ikg-root">
+    <section class="ikg-stage ikg-stage-landing" id="ikg-stage-landing">
+      <div class="ikg-hero">
+        <div class="ikg-hero-badge">איקיאגי + שאלון אישי קצר</div>
+        <h2>אין עבודה אחת שמתאימה לך. יש כמה.</h2>
+        <p>בוא נגלה איזה כיוונים יכולים לעבוד בשבילך.</p>
+        <button class="ikg-btn-primary" type="button" id="ikg-start-btn">יאללה נבדוק (3 דקות)</button>
+      </div>
+      <div class="ikg-landing-note">זה כלי לחקירה, לא ייעוץ קריירה.</div>
+    </section>
+
+    <section class="ikg-stage ikg-stage-quiz" id="ikg-stage-quiz" hidden>
+      <div class="ikg-progress-wrap">
+        <div class="ikg-progress-head">
+          <span id="ikg-progress-text">שאלה 1 מתוך 6</span>
+          <span id="ikg-progress-percent">17%</span>
+        </div>
+        <div class="ikg-progress-bar" aria-hidden="true">
+          <div class="ikg-progress-fill" id="ikg-progress-fill"></div>
+        </div>
+        <div class="ikg-progress-dots" id="ikg-progress-dots"></div>
+      </div>
+      <article class="ikg-question-card" id="ikg-question-card"></article>
+    </section>
+
+    <section class="ikg-stage ikg-stage-results" id="ikg-stage-results" hidden>
+      <div class="ikg-results-top">
+        <h2>מה נראה שמתאים לך</h2>
+        <button class="ikg-btn-ghost" type="button" id="ikg-restart-btn">ענייה מחדש</button>
+      </div>
+
+      <div class="ikg-card">
+        <div class="ikg-checks" id="ikg-profile-summary"></div>
+      </div>
+
+      <div class="ikg-grid ikg-ikigai-grid" id="ikg-ikigai-blocks"></div>
+
+      <div class="ikg-card">
+        <div class="ikg-section-title">כיוונים שיכולים להתאים לך</div>
+        <div class="ikg-directions" id="ikg-directions"></div>
+      </div>
+
+      <div class="ikg-card">
+        <div class="ikg-section-title">מה אם הייתי אחר?</div>
+        <p class="ikg-sub-note">נסה לשנות את הסליידרים ותראה איך הכיוונים משתנים. אין פה תשובה אחת נכונה - השאלה מה אתה רוצה לנסות.</p>
+        <div class="ikg-sliders" id="ikg-sliders"></div>
+      </div>
+
+      <div class="ikg-card ikg-insight-card">
+        <div class="ikg-section-title">Insight אישי</div>
+        <p class="ikg-insight" id="ikg-insight"></p>
+      </div>
+      <div class="ikg-landing-note">זה כלי לחקירה, לא ייעוץ קריירה.</div>
+    </section>
+  </div>
+</section>
+
+<section class="app-page page-shell" id="page-cv-template-israeli" hidden>
+  <div class="card placeholder-card">
+    <h2>🧾 עבודה: פורמט קורות חיים לדוגמה (ישראל ישראלי)</h2>
+    <p>שלד עמוד ללא תוכן. כאן יתווסף מבנה קורות חיים לדוגמה בפורמט ישראלי.</p>
+    <div class="placeholder-note">מבנה ראשוני מוכן ליישום.</div>
+  </div>
+</section>
+
+<footer class="bottom-credit" dir="rtl">
+  נבנה על ידי עילי בועז יונייב ופעמונים |
+  <a href="https://ilayboaz.com" target="_blank" rel="noopener noreferrer">ilayboaz.com</a>
+</footer>
+
