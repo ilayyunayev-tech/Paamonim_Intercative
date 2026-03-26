@@ -124,6 +124,11 @@ button:focus-visible,input:focus-visible{
   font-family:'Assistant','Heebo',sans-serif;font-weight:800;
   font-size:22px;color:var(--primary-dark);letter-spacing:0.2px;
 }
+.brand-center-link{
+  text-decoration:none!important;color:inherit;
+  border-radius:8px;padding:2px 8px;
+}
+.brand-center-link:hover{background:#F3EEFA}
 .brand-logo{
   width:38px;height:38px;object-fit:contain;display:block;
 }
@@ -151,6 +156,68 @@ button:focus-visible,input:focus-visible{
 }
 body.menu-open .hamburger-nav{transform:translateX(0)}
 body.menu-open .menu-overlay{opacity:1;pointer-events:auto}
+
+/* ─── ACCESSIBILITY BAR ─────────────────────── */
+.a11y-fab{
+  position:fixed;left:16px;bottom:16px;z-index:1300;
+  width:52px;height:52px;border:none;border-radius:50%;
+  background:var(--grad-main);color:white;font-size:24px;cursor:pointer;
+  box-shadow:var(--shadow-lg);
+}
+.a11y-panel{
+  position:fixed;left:16px;bottom:78px;z-index:1300;width:min(320px,92vw);
+  background:#fff;border:1px solid var(--color-border);border-radius:16px;
+  box-shadow:var(--shadow-lg);padding:12px;display:none;
+}
+.a11y-panel.open{display:block}
+.a11y-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.a11y-head strong{font-size:15px;color:var(--primary-dark)}
+.a11y-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.a11y-btn{
+  border:1px solid #D6DBE7;background:#F9F9FB;color:#2D3748;
+  border-radius:10px;padding:9px 10px;font-weight:700;cursor:pointer;font-size:13px;
+}
+.a11y-btn.active{background:#F3EEFA;border-color:var(--purple);color:var(--primary-dark)}
+.a11y-foot{display:flex;justify-content:space-between;gap:8px;margin-top:10px}
+.a11y-foot .a11y-btn{flex:1}
+
+body.a11y-underline a{text-decoration:underline!important}
+body.a11y-underline a.brand-center-link{text-decoration:none!important}
+body.a11y-readable,body.a11y-readable *{font-family:'Assistant','Heebo',sans-serif!important;line-height:1.8}
+body.a11y-contrast{
+  --color-bg:#FFFFFF;
+  --color-surface:#FFFFFF;
+  --color-text:#111111;
+  --color-text-muted:#2A2A2A;
+  --color-border:#2F2F2F;
+  filter:contrast(1.2) saturate(1.05);
+}
+body.a11y-contrast .card,
+body.a11y-contrast .salary-bar,
+body.a11y-contrast .top-nav,
+body.a11y-contrast .a11y-panel{
+  border-color:#111!important;
+}
+body.a11y-no-motion *,body.a11y-no-motion *::before,body.a11y-no-motion *::after{
+  animation:none!important;transition:none!important;scroll-behavior:auto!important;
+}
+
+/* ─── BOTTOM CREDIT BANNER ───────────────────── */
+.bottom-credit{
+  position:fixed;left:0;right:0;bottom:0;z-index:1190;
+  background:rgba(255,255,255,0.97);backdrop-filter:blur(6px);
+  border-top:1px solid var(--color-border);
+  text-align:center;padding:10px 12px;
+  font-size:13px;font-weight:700;color:#3B4558;
+}
+.bottom-credit a{color:var(--primary-dark);text-decoration:underline}
+.a11y-fab{bottom:64px}
+.a11y-panel{bottom:126px}
+@media(max-width:600px){
+  .a11y-fab{left:12px;bottom:58px}
+  .a11y-panel{left:12px;bottom:118px}
+  .bottom-credit{font-size:12px;padding:9px 10px}
+}
 
 .page-shell{max-width:1200px;margin:0 auto;padding:32px 24px}
 .placeholder-card{padding:26px}
@@ -202,6 +269,8 @@ body.menu-open .menu-overlay{opacity:1;pointer-events:auto}
 #page-compound-savings-investment-age .timeline-shell{margin-top:10px;border-top:1px dashed #D8DEEA;padding-top:10px}
 #page-compound-savings-investment-age .timeline-range{width:100%;accent-color:var(--primary)}
 #page-compound-savings-investment-age .timeline-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);margin-bottom:6px}
+#page-compound-savings-investment-age .timeline-shell{direction:rtl}
+#page-compound-savings-investment-age .timeline-range{direction:rtl}
 #page-compound-savings-investment-age .milestones{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 #page-compound-savings-investment-age .milestone{padding:6px 10px;border-radius:999px;background:#F1F5F9;border:1px solid #D9E2EE;font-size:12px;font-weight:700;color:#42526B}
 #page-compound-savings-investment-age .story-box{margin-top:10px;padding:12px;border-radius:12px;background:#F0FBF0;border:1px solid #BEE7C0;color:#215A31;font-weight:700}
@@ -324,7 +393,7 @@ body.menu-open .menu-overlay{opacity:1;pointer-events:auto}
   background:white;padding:20px 32px;
   display:flex;align-items:center;gap:18px;flex-wrap:wrap;
   box-shadow:var(--shadow-sm);
-  position:sticky;top:64px;z-index:100;
+  position:relative;top:auto;z-index:100;
   border-bottom:1px solid var(--color-border);
 }
 .salary-label{font-weight:700;font-size:14px;color:var(--primary-dark);white-space:nowrap;display:flex;align-items:center;gap:8px}
@@ -612,7 +681,7 @@ input[type=range].mini-slider::-webkit-slider-thumb{
   .header{padding:82px 20px 38px}
   .header h1{font-size:32px}
   .header p{font-size:14px}
-  .salary-bar{padding:14px 16px;gap:12px;position:relative;top:60px}
+  .salary-bar{padding:14px 16px;gap:12px;position:relative;top:auto}
   .salary-input{width:150px;font-size:22px}
   .card-header h2,.sim-card h2,.bar-card h2,.savings-header h2{font-size:18px}
   .add-row{gap:10px}
@@ -638,7 +707,7 @@ input[type=range].mini-slider::-webkit-slider-thumb{
 <!-- NAV -->
 <div class="top-nav" dir="rtl">
   <button class="menu-toggle" id="menu-toggle" type="button" aria-label="פתח תפריט ניווט">☰</button>
-  <div class="brand-center">פעמונים</div>
+  <a class="brand-center brand-center-link" href="#/wants-vs-needs" aria-label="מעבר למסך הראשי">פעמונים</a>
   <img class="brand-logo" src="./assets/branding/new_logo.png" alt="לוגו פעמונים"/>
 </div>
 <div class="menu-overlay" id="menu-overlay"></div>
@@ -650,6 +719,25 @@ input[type=range].mini-slider::-webkit-slider-thumb{
   <a href="#/ikigai-personality-onboarding">איקיאגי + שאלון אישיות</a>
   <a href="#/cv-template-israeli">עבודה: פורמט קורות חיים לדוגמה (ישראל ישראלי)</a>
 </nav>
+
+<!-- ACCESSIBILITY -->
+<button class="a11y-fab" id="a11y-fab" type="button" aria-label="פתח סרגל נגישות">♿</button>
+<section class="a11y-panel" id="a11y-panel" aria-label="סרגל נגישות">
+  <div class="a11y-head">
+    <strong>סרגל נגישות</strong>
+    <button class="a11y-btn" id="a11y-close" type="button" aria-label="סגור סרגל נגישות">סגור</button>
+  </div>
+  <div class="a11y-actions">
+    <button class="a11y-btn" id="a11y-font">A+ הגדלת טקסט</button>
+    <button class="a11y-btn" id="a11y-contrast">ניגודיות גבוהה</button>
+    <button class="a11y-btn" id="a11y-underline">הדגשת קישורים</button>
+    <button class="a11y-btn" id="a11y-readable">פונט קריא</button>
+    <button class="a11y-btn" id="a11y-motion">עצירת אנימציות</button>
+  </div>
+  <div class="a11y-foot">
+    <button class="a11y-btn" id="a11y-reset">איפוס</button>
+  </div>
+</section>
 
 <section class="app-page" id="page-wants-vs-needs">
 <!-- ═══ HEADER ══════════════════════════════ -->
@@ -786,8 +874,8 @@ input[type=range].mini-slider::-webkit-slider-thumb{
 
 <section class="app-page page-shell" id="page-compound-savings-investment-age" hidden>
   <div class="compound-wrap">
-    <div class="compound-hero">
-      <h2>איפה הכסף נעלם?</h2>
+    <div class="compound-hero"> <br /> <br />
+      <h2>לאן נעלם הכסף?</h2>
       <p>מה היה קורה אם החלטה חודשית קטנה היתה מתחילה מוקדם יותר?</p>
     </div>
 
@@ -797,7 +885,7 @@ input[type=range].mini-slider::-webkit-slider-thumb{
         <div class="field-row">
           <div class="field">
             <label for="cmp-person-name">שם</label>
-            <input id="cmp-person-name" type="text" value="אדם קרוב"/>
+            <input id="cmp-person-name" type="text" placeholder="אמא"/>
           </div>
           <div class="field">
             <label for="cmp-current-age">גיל נוכחי</label>
@@ -820,7 +908,7 @@ input[type=range].mini-slider::-webkit-slider-thumb{
         <div class="compound-title">שולטים בתרחיש בזמן אמת</div>
         <div class="range-box">
           <div class="range-top"><span>כמה בערך הוא מרוויח בחודש?</span><span id="cmp-income-label">₪15,000</span></div>
-          <input class="range-input" id="cmp-income" type="range" min="4000" max="30000" value="15000" step="500"/>
+          <input class="range-input" id="cmp-income" type="range" min="4000" max="300000" value="15000" step="500"/>
         </div>
         <div class="range-box">
           <div class="range-top"><span>כמה הוא מצליח לשים בצד כל חודש?</span><span id="cmp-saving-rate-label">10%</span></div>
@@ -839,7 +927,7 @@ input[type=range].mini-slider::-webkit-slider-thumb{
     </div>
 
     <div class="compound-card">
-      <div class="compound-title">אם <span id="cmp-title-name">אדם קרוב</span> היה מתחיל לחסוך מוקדם...</div>
+      <div class="compound-title">אם <span id="cmp-title-name">אדם קרוב</span> התחיל/ה לחסוך מוקדם יותר...</div>
       <div class="kpi-grid">
         <div class="kpi"><div class="val" id="cmp-kpi-contrib">₪0</div><div class="lbl">הופקד בפועל</div></div>
         <div class="kpi"><div class="val" id="cmp-kpi-final">₪0</div><div class="lbl">שווי מצטבר היום</div></div>
@@ -864,7 +952,7 @@ input[type=range].mini-slider::-webkit-slider-thumb{
       </div>
 
       <div class="timeline-shell">
-        <div class="timeline-meta"><span>ציר גיל חי</span><span id="cmp-timeline-age-label">גיל 22</span></div>
+        <div class="timeline-meta"><span>שנה גיל</span><span id="cmp-timeline-age-label">גיל 22</span></div>
         <input id="cmp-timeline-age" class="timeline-range" type="range" min="22" max="45" value="22" step="1"/>
         <div class="micro-copy" id="cmp-timeline-balance">בגיל הזה הסכום המשוער היה: ₪0</div>
         <div class="milestones" id="cmp-milestones"></div>
@@ -888,9 +976,10 @@ input[type=range].mini-slider::-webkit-slider-thumb{
         </div>
       </div>
       <div class="target-chips" id="cmp-target-chips">
-        <button class="target-chip active" data-target-age="30">יעד: גיל 30</button>
-        <button class="target-chip" data-target-age="35">יעד: גיל 35</button>
-        <button class="target-chip" data-target-age="40">יעד: גיל 40</button>
+        <span class="micro-copy" style="width:100%">עד איזה גיל לחשב עבורך?</span>
+        <button class="target-chip active" data-target-age="30">עד גיל 30</button>
+        <button class="target-chip" data-target-age="35">עד גיל 35</button>
+        <button class="target-chip" data-target-age="40">עד גיל 40</button>
       </div>
       <div class="story-box" id="cmp-user-story" style="margin-top:10px">אם תתחיל עכשיו עם ₪800 בחודש, בגיל 30 יכולים להיות לך ₪0.</div>
       <div class="disclaimer">הכלי מציג הדגמה לימודית בלבד. הוא לא מבטיח תשואה ולא ממליץ על מוצר פיננסי.</div>
@@ -900,7 +989,7 @@ input[type=range].mini-slider::-webkit-slider-thumb{
 
 <section class="app-page page-shell" id="page-index-investing" hidden>
   <div class="index-wrap">
-    <div class="index-hero">
+    <div class="index-hero"> <br /> <br />
       <h2>תיק השקעות - ניסיון ראשון</h2>
       <p>שמים כסף, הזמן עובר, ולומדים מה קורה בדרך. בלי מסחר אמיתי ובלי הבטחות.</p>
     </div>
@@ -1037,6 +1126,11 @@ input[type=range].mini-slider::-webkit-slider-thumb{
   </div>
 </section>
 
+<footer class="bottom-credit" dir="rtl">
+  נבנה על ידי עילי בועז יונייב ופעמונים |
+  <a href="https://ilayboaz.com" target="_blank" rel="noopener noreferrer">ilayboaz.com</a>
+</footer>
+
 <script src="./assets/ikigai-personality.js"></script>
 <script>
 /* ═══ DATA ═══════════════════════════════════════ */
@@ -1102,9 +1196,87 @@ const ROUTE_TITLES={
   '#/ikigai-personality-onboarding':'איקיאגי + שאלון אישיות',
   '#/cv-template-israeli':'עבודה: פורמט קורות חיים'
 };
+const A11Y_KEY='paamonim_a11y_prefs_v1';
+const a11yState={fontScale:100,contrast:false,underline:false,readable:false,noMotion:false};
 
 function closeMenu(){document.body.classList.remove('menu-open')}
 function openMenu(){document.body.classList.add('menu-open')}
+function closeA11y(){document.getElementById('a11y-panel').classList.remove('open')}
+function openA11y(){document.getElementById('a11y-panel').classList.add('open')}
+
+function saveA11y(){
+  localStorage.setItem(A11Y_KEY,JSON.stringify(a11yState));
+}
+function loadA11y(){
+  try{
+    const raw=localStorage.getItem(A11Y_KEY);
+    if(!raw) return;
+    const parsed=JSON.parse(raw);
+    Object.assign(a11yState,parsed||{});
+  }catch{}
+}
+function syncA11yButtons(){
+  const setActive=(id,val)=>{
+    const btn=document.getElementById(id);
+    if(!btn) return;
+    btn.classList.toggle('active',!!val);
+    btn.setAttribute('aria-pressed',val?'true':'false');
+  };
+  const fontBtn=document.getElementById('a11y-font');
+  if(fontBtn){
+    fontBtn.textContent=a11yState.fontScale===100?'A+ הגדלת טקסט':`A ${a11yState.fontScale}%`;
+    fontBtn.classList.toggle('active',a11yState.fontScale>100);
+    fontBtn.setAttribute('aria-pressed',a11yState.fontScale>100?'true':'false');
+  }
+  setActive('a11y-contrast',a11yState.contrast);
+  setActive('a11y-underline',a11yState.underline);
+  setActive('a11y-readable',a11yState.readable);
+  setActive('a11y-motion',a11yState.noMotion);
+}
+function applyA11y(){
+  document.body.style.zoom=String(a11yState.fontScale/100);
+  document.body.classList.toggle('a11y-contrast',a11yState.contrast);
+  document.body.classList.toggle('a11y-underline',a11yState.underline);
+  document.body.classList.toggle('a11y-readable',a11yState.readable);
+  document.body.classList.toggle('a11y-no-motion',a11yState.noMotion);
+  syncA11yButtons();
+}
+function resetA11y(){
+  a11yState.fontScale=100;
+  a11yState.contrast=false;
+  a11yState.underline=false;
+  a11yState.readable=false;
+  a11yState.noMotion=false;
+  applyA11y();
+  saveA11y();
+}
+function initA11y(){
+  loadA11y();
+  applyA11y();
+  document.getElementById('a11y-fab').addEventListener('click',()=>{
+    const panel=document.getElementById('a11y-panel');
+    panel.classList.contains('open')?closeA11y():openA11y();
+  });
+  document.getElementById('a11y-close').addEventListener('click',closeA11y);
+  document.getElementById('a11y-font').addEventListener('click',()=>{
+    a11yState.fontScale=a11yState.fontScale===100?112:(a11yState.fontScale===112?125:100);
+    applyA11y();saveA11y();
+  });
+  document.getElementById('a11y-contrast').addEventListener('click',()=>{
+    a11yState.contrast=!a11yState.contrast;applyA11y();saveA11y();
+  });
+  document.getElementById('a11y-underline').addEventListener('click',()=>{
+    a11yState.underline=!a11yState.underline;applyA11y();saveA11y();
+  });
+  document.getElementById('a11y-readable').addEventListener('click',()=>{
+    a11yState.readable=!a11yState.readable;applyA11y();saveA11y();
+  });
+  document.getElementById('a11y-motion').addEventListener('click',()=>{
+    a11yState.noMotion=!a11yState.noMotion;applyA11y();saveA11y();
+  });
+  document.getElementById('a11y-reset').addEventListener('click',resetA11y);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeA11y();}});
+}
 
 function bootstrapMainPage(){
   if(appBootstrapped) return;
@@ -1692,7 +1864,7 @@ function recalcCompound(){
   document.getElementById('cmp-gap').textContent=fmtIls(gap);
   document.getElementById('cmp-potential-copy').textContent=`אם היה שם ${savingsRate}% בצד מגיל ${startAge}...`;
   document.getElementById('cmp-status-copy').textContent=statusCopy(compoundState.status);
-  document.getElementById('cmp-story').textContent=`אם ${name} היה מתחיל בגיל ${startAge}, היום היו יכולים להיות לו ${fmtIls(withGrowth.balance)}. אבל זה לא מאוחר בשבילך.`;
+  document.getElementById('cmp-story').textContent=`אם ${name} התחיל/ה בגיל ${startAge}, היום היו יכולים להיות לו ${fmtIls(withGrowth.balance)}. אבל זה לא מאוחר בשבילך.`;
 
   const timeline=document.getElementById('cmp-timeline-age');
   timeline.min=String(startAge);
@@ -1744,6 +1916,7 @@ document.getElementById('menu-toggle').addEventListener('click',()=>{
 document.getElementById('menu-overlay').addEventListener('click',closeMenu);
 document.querySelectorAll('#hamburger-nav a').forEach(link=>link.addEventListener('click',closeMenu));
 window.addEventListener('hashchange',setRoute);
+initA11y();
 setRoute();
 </script>
 </body>
