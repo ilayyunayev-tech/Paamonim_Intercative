@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { exposeCvDocxOnWindow } from './cvDocxExport';
 
 const LEGACY_STYLES = ['/legacy/ikigai-personality.css'];
 
@@ -55,6 +56,7 @@ export function App() {
   useEffect(() => {
     if (!markup) return;
     const run = async () => {
+      exposeCvDocxOnWindow();
       for (const src of LEGACY_SCRIPTS) {
         await appendScript(src);
       }

@@ -420,11 +420,114 @@
   </div>
 </section>
 
-<section class="app-page page-shell" id="page-cv-template-israeli" hidden>
-  <div class="card placeholder-card">
-    <h2>🧾 עבודה: פורמט קורות חיים לדוגמה (ישראל ישראלי)</h2>
-    <p>שלד עמוד ללא תוכן. כאן יתווסף מבנה קורות חיים לדוגמה בפורמט ישראלי.</p>
-    <div class="placeholder-note">מבנה ראשוני מוכן ליישום.</div>
+<section class="app-page cv-page page-shell" id="page-cv-template-israeli" hidden dir="rtl">
+  <div class="cv-layout">
+    <aside class="cv-sidebar" aria-label="עריכת קורות חיים">
+      <div class="cv-sidebar-head">
+        <div>
+          <h2 class="cv-sidebar-title">עריכת קורות חיים</h2>
+          <p class="cv-sidebar-sub">השינויים מתעדכנים בזמן אמת. אין שליחה לשרת.</p>
+        </div>
+        <div class="cv-toolbar">
+          <button type="button" class="cv-btn cv-btn-primary" id="cv-btn-download-docx">הורדה כ-DOCX</button>
+          <button type="button" class="cv-btn cv-btn-secondary" id="cv-btn-save-draft">שמור טיוטה</button>
+          <button type="button" class="cv-btn cv-btn-ghost" id="cv-btn-load-mock">טען נתוני MOCK</button>
+        </div>
+      </div>
+
+      <div class="cv-form">
+        <div class="cv-card">
+          <h3 class="cv-section-label">פרטים אישיים</h3>
+          <div class="cv-field">
+            <label for="cv-in-fullName">שם מלא</label>
+            <input id="cv-in-fullName" type="text" autocomplete="name" />
+          </div>
+          <div class="cv-field">
+            <label for="cv-in-title">כותרת מקצועית</label>
+            <input id="cv-in-title" type="text" />
+          </div>
+          <div class="cv-field-row">
+            <div class="cv-field">
+              <label for="cv-in-email">אימייל</label>
+              <input id="cv-in-email" type="email" autocomplete="email" />
+            </div>
+            <div class="cv-field">
+              <label for="cv-in-phone">טלפון</label>
+              <input id="cv-in-phone" type="tel" autocomplete="tel" />
+            </div>
+          </div>
+          <div class="cv-field">
+            <label for="cv-in-location">מיקום</label>
+            <input id="cv-in-location" type="text" />
+          </div>
+        </div>
+
+        <div class="cv-card">
+          <h3 class="cv-section-label">תמצית</h3>
+          <div class="cv-field">
+            <label for="cv-in-summary">תמצית מקצועית</label>
+            <textarea id="cv-in-summary" rows="5"></textarea>
+          </div>
+        </div>
+
+        <div class="cv-card">
+          <div class="cv-card-head">
+            <h3 class="cv-section-label">השכלה</h3>
+            <button type="button" class="cv-icon-btn" id="cv-add-edu" aria-label="הוסף השכלה">+</button>
+          </div>
+          <div id="cv-editor-education"></div>
+        </div>
+
+        <div class="cv-card">
+          <div class="cv-card-head">
+            <h3 class="cv-section-label">ניסיון תעסוקתי</h3>
+            <button type="button" class="cv-icon-btn" id="cv-add-exp" aria-label="הוסף ניסיון">+</button>
+          </div>
+          <div id="cv-editor-experience"></div>
+        </div>
+
+        <div class="cv-card">
+          <div class="cv-card-head">
+            <h3 class="cv-section-label">כישורים</h3>
+            <button type="button" class="cv-icon-btn" id="cv-add-skill" aria-label="הוסף כישור">+</button>
+          </div>
+          <div id="cv-editor-skills"></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="cv-preview-column">
+      <div class="cv-preview-hint">תצוגה מקדימה — כך ייראה ה-CV בערך ב-DOCX</div>
+      <div class="cv-paper" id="cv-preview-root">
+        <header class="cv-pr-header">
+          <h1 class="cv-pr-name" id="cv-pr-name"></h1>
+          <p class="cv-pr-title" id="cv-pr-title"></p>
+          <div class="cv-pr-contact" id="cv-pr-contact"></div>
+        </header>
+        <div class="cv-pr-grid">
+          <div class="cv-pr-side">
+            <section class="cv-pr-block">
+              <h2 class="cv-pr-h2">השכלה</h2>
+              <div id="cv-pr-education"></div>
+            </section>
+            <section class="cv-pr-block">
+              <h2 class="cv-pr-h2">כישורים</h2>
+              <div id="cv-pr-skills"></div>
+            </section>
+          </div>
+          <div class="cv-pr-main">
+            <section class="cv-pr-block">
+              <h2 class="cv-pr-h2">תמצית</h2>
+              <p class="cv-pr-summary" id="cv-pr-summary"></p>
+            </section>
+            <section class="cv-pr-block">
+              <h2 class="cv-pr-h2">ניסיון תעסוקתי</h2>
+              <div id="cv-pr-experience"></div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 

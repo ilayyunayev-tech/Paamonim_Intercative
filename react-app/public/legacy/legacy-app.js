@@ -219,6 +219,7 @@ function setRoute(){
   if(activeId==='page-compound-savings-investment-age') bootstrapCompoundPage();
   if(activeId==='page-index-investing') bootstrapIndexInvestingPage();
   if(activeId==='page-ikigai-personality-onboarding') bootstrapIkigaiPage();
+  if(activeId==='page-cv-template-israeli') bootstrapCvPage();
   closeMenu();
 }
 
@@ -773,6 +774,288 @@ function recalcCompound(){
   const userMonths=(targetAge-userAge)*12;
   const userSim=simulateCompound(userMonthly,userMonths,annualReturn);
   document.getElementById('cmp-user-story').textContent=`אם תתחיל עכשיו עם ${fmtIls(userMonthly)} בחודש, בגיל ${targetAge} יכולים להיות לך ${fmtIls(userSim.balance)}.`;
+}
+
+/* ═══ CV PAGE (live editor + DOCX) ═════════════════ */
+const CV_STORAGE_KEY='paamonim_cv_draft_v1';
+let cvBootstrapped=false;
+let cvState=null;
+
+function cvClone(o){return JSON.parse(JSON.stringify(o));}
+
+function escapeHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function escapeCvAttr(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+function getCvMock(){
+  if(window.PaamonimCvDocx&&window.PaamonimCvDocx.CV_MOCK_STATE){
+    return cvClone(window.PaamonimCvDocx.CV_MOCK_STATE);
+  }
+  return{
+    fullName:'',title:'',email:'',phone:'',location:'',summary:'',
+    education:[],experience:[],skills:[]
+  };
+}
+
+function loadCvDraft(){
+  try{
+    const raw=localStorage.getItem(CV_STORAGE_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(_e){return null;}
+}
+
+function saveCvDraftToStorage(){
+  try{
+    readCvFromUi();
+    localStorage.setItem(CV_STORAGE_KEY,JSON.stringify(cvState));
+    alert('הטיוטה נשמרה במכשיר זה (דפדפן).');
+  }catch(_e){
+    alert('לא ניתן לשמור כרגע.');
+  }
+}
+
+function readCvFromUi(){
+  if(!cvState) return;
+  cvState.fullName=(document.getElementById('cv-in-fullName')||{}).value||'';
+  cvState.title=(document.getElementById('cv-in-title')||{}).value||'';
+  cvState.email=(document.getElementById('cv-in-email')||{}).value||'';
+  cvState.phone=(document.getElementById('cv-in-phone')||{}).value||'';
+  cvState.location=(document.getElementById('cv-in-location')||{}).value||'';
+  cvState.summary=(document.getElementById('cv-in-summary')||{}).value||'';
+
+  cvState.education=[];
+  document.querySelectorAll('[data-cv-edu-card]').forEach(card=>{
+    cvState.education.push({
+      degree:((card.querySelector('[data-field=degree]')||{}).value||'').trim(),
+      institution:((card.querySelector('[data-field=institution]')||{}).value||'').trim(),
+      years:((card.querySelector('[data-field=years]')||{}).value||'').trim()
+    });
+  });
+
+  cvState.experience=[];
+  document.querySelectorAll('[data-cv-exp-card]').forEach(card=>{
+    const bulletsRaw=((card.querySelector('[data-field=bullets]')||{}).value||'');
+    const bullets=bulletsRaw.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+    cvState.experience.push({
+      company:((card.querySelector('[data-field=company]')||{}).value||'').trim(),
+      role:((card.querySelector('[data-field=role]')||{}).value||'').trim(),
+      period:((card.querySelector('[data-field=period]')||{}).value||'').trim(),
+      bullets:bullets
+    });
+  });
+
+  cvState.skills=[];
+  document.querySelectorAll('[data-cv-skill-card]').forEach(card=>{
+    const level=parseInt(((card.querySelector('[data-field=level]')||{}).value)||'3',10);
+    cvState.skills.push({
+      name:((card.querySelector('[data-field=name]')||{}).value||'').trim(),
+      level:Math.max(1,Math.min(5,isNaN(level)?3:level))
+    });
+  });
+}
+
+function writeCvToUi(){
+  const g=function(id){return document.getElementById(id);};
+  if(g('cv-in-fullName')) g('cv-in-fullName').value=cvState.fullName||'';
+  if(g('cv-in-title')) g('cv-in-title').value=cvState.title||'';
+  if(g('cv-in-email')) g('cv-in-email').value=cvState.email||'';
+  if(g('cv-in-phone')) g('cv-in-phone').value=cvState.phone||'';
+  if(g('cv-in-location')) g('cv-in-location').value=cvState.location||'';
+  if(g('cv-in-summary')) g('cv-in-summary').value=cvState.summary||'';
+}
+
+function renderCvEditor(){
+  const edu=document.getElementById('cv-editor-education');
+  const exp=document.getElementById('cv-editor-experience');
+  const sk=document.getElementById('cv-editor-skills');
+  if(!edu||!exp||!sk||!cvState) return;
+
+  edu.innerHTML=cvState.education.length?cvState.education.map(function(e,i){
+    return '<div class="cv-repeat-card" data-cv-edu-card>'+
+      '<button type="button" class="cv-remove-btn" data-cv-remove-edu="'+i+'">הסר</button>'+
+      '<div class="cv-field"><label>תואר / לימודים</label><input data-field="degree" type="text" value="'+escapeCvAttr(e.degree)+'"/></div>'+
+      '<div class="cv-field"><label>מוסד</label><input data-field="institution" type="text" value="'+escapeCvAttr(e.institution)+'"/></div>'+
+      '<div class="cv-field"><label>שנים</label><input data-field="years" type="text" value="'+escapeCvAttr(e.years)+'"/></div>'+
+      '</div>';
+  }).join(''):'<p class="cv-empty-hint">אין פריטים. לחץ + להוספה.</p>';
+
+  exp.innerHTML=cvState.experience.length?cvState.experience.map(function(x,i){
+    var bullets=(x.bullets||[]).join('\n');
+    return '<div class="cv-repeat-card" data-cv-exp-card>'+
+      '<button type="button" class="cv-remove-btn" data-cv-remove-exp="'+i+'">הסר</button>'+
+      '<div class="cv-field"><label>חברה</label><input data-field="company" type="text" value="'+escapeCvAttr(x.company)+'"/></div>'+
+      '<div class="cv-field"><label>תפקיד</label><input data-field="role" type="text" value="'+escapeCvAttr(x.role)+'"/></div>'+
+      '<div class="cv-field"><label>תקופה</label><input data-field="period" type="text" value="'+escapeCvAttr(x.period)+'"/></div>'+
+      '<div class="cv-field"><label>תיאור (שורה לכל נקודה)</label><textarea data-field="bullets" rows="4">'+escapeHtml(bullets)+'</textarea></div>'+
+      '</div>';
+  }).join(''):'<p class="cv-empty-hint">אין פריטים. לחץ + להוספה.</p>';
+
+  sk.innerHTML=cvState.skills.length?cvState.skills.map(function(x,i){
+    return '<div class="cv-repeat-card" data-cv-skill-card>'+
+      '<button type="button" class="cv-remove-btn" data-cv-remove-skill="'+i+'">הסר</button>'+
+      '<div class="cv-field-row">'+
+      '<div class="cv-field cv-field-grow"><label>כישור</label><input data-field="name" type="text" value="'+escapeCvAttr(x.name)+'"/></div>'+
+      '<div class="cv-field cv-field-narrow"><label>רמה (1–5)</label><input data-field="level" type="number" min="1" max="5" value="'+(x.level||3)+'"/></div>'+
+      '</div></div>';
+  }).join(''):'<p class="cv-empty-hint">אין כישורים. לחץ + להוספה.</p>';
+}
+
+function renderCvPreview(){
+  if(!cvState) return;
+  var nameEl=document.getElementById('cv-pr-name');
+  var titleEl=document.getElementById('cv-pr-title');
+  var contactEl=document.getElementById('cv-pr-contact');
+  var sumEl=document.getElementById('cv-pr-summary');
+  if(nameEl) nameEl.textContent=cvState.fullName||'';
+  if(titleEl) titleEl.textContent=cvState.title||'';
+  var parts=[];
+  if(cvState.phone) parts.push(cvState.phone);
+  if(cvState.email) parts.push(cvState.email);
+  if(cvState.location) parts.push(cvState.location);
+  if(contactEl) contactEl.textContent=parts.join(' · ');
+  if(sumEl) sumEl.textContent=cvState.summary||'';
+
+  var eduEl=document.getElementById('cv-pr-education');
+  if(eduEl){
+    var eduRows=(cvState.education||[]).filter(function(e){return e.degree||e.institution||e.years;});
+    eduEl.innerHTML=eduRows.length?eduRows.map(function(e){
+      return '<div class="cv-pr-item"><div class="cv-pr-item-title">'+escapeHtml(e.degree)+'</div>'+
+        '<div class="cv-pr-item-sub">'+escapeHtml(e.institution)+'</div>'+
+        '<div class="cv-pr-item-meta">'+escapeHtml(e.years)+'</div></div>';
+    }).join(''):'<p class="cv-pr-muted">—</p>';
+  }
+
+  var expEl=document.getElementById('cv-pr-experience');
+  if(expEl){
+    expEl.innerHTML=(cvState.experience||[]).length?(cvState.experience.map(function(ex){
+      var bullets=(ex.bullets||[]).map(function(b){return '<li>'+escapeHtml(b)+'</li>';}).join('');
+      return '<div class="cv-pr-exp"><div class="cv-pr-exp-head"><span class="cv-pr-exp-role">'+escapeHtml(ex.role)+' — '+escapeHtml(ex.company)+'</span>'+
+        '<span class="cv-pr-exp-period">'+escapeHtml(ex.period)+'</span></div>'+
+        (bullets?'<ul class="cv-pr-bullets">'+bullets+'</ul>':'')+'</div>';
+    }).join('')):'<p class="cv-pr-muted">—</p>';
+  }
+
+  var skEl=document.getElementById('cv-pr-skills');
+  if(skEl){
+    var skills=(cvState.skills||[]).filter(function(s){return s.name;});
+    skEl.innerHTML=skills.length?skills.map(function(s){
+      var n=Math.max(0,Math.min(5,parseInt(s.level,10)||0));
+      var dots='';
+      for(var i=0;i<5;i++){dots+='<span class="cv-dot '+(i<n?'on':'')+'"></span>';}
+      return '<div class="cv-pr-skill"><span>'+escapeHtml(s.name)+'</span><span class="cv-pr-dots">'+dots+'</span></div>';
+    }).join(''):'<p class="cv-pr-muted">—</p>';
+  }
+}
+
+function bindCvPageOnce(){
+  var root=document.getElementById('page-cv-template-israeli');
+  if(!root||root.dataset.cvUiBound==='1') return;
+  root.dataset.cvUiBound='1';
+  root.addEventListener('input',function(){
+    if(!cvState) return;
+    readCvFromUi();
+    renderCvPreview();
+  });
+  root.addEventListener('click',function(e){
+    var el=e.target;
+    if(!el||!el.closest) return;
+    if(el.closest('[data-cv-remove-edu]')){
+      var b=el.closest('[data-cv-remove-edu]');
+      var i=parseInt(b.getAttribute('data-cv-remove-edu'),10);
+      readCvFromUi();
+      cvState.education.splice(i,1);
+      renderCvEditor();
+      renderCvPreview();
+      return;
+    }
+    if(el.closest('[data-cv-remove-exp]')){
+      var b2=el.closest('[data-cv-remove-exp]');
+      var j=parseInt(b2.getAttribute('data-cv-remove-exp'),10);
+      readCvFromUi();
+      cvState.experience.splice(j,1);
+      renderCvEditor();
+      renderCvPreview();
+      return;
+    }
+    if(el.closest('[data-cv-remove-skill]')){
+      var b3=el.closest('[data-cv-remove-skill]');
+      var k=parseInt(b3.getAttribute('data-cv-remove-skill'),10);
+      readCvFromUi();
+      cvState.skills.splice(k,1);
+      renderCvEditor();
+      renderCvPreview();
+    }
+  });
+}
+
+async function downloadCvDocx(){
+  if(!window.PaamonimCvDocx||typeof window.PaamonimCvDocx.buildCvDocxBlob!=='function'){
+    alert('ייצוא DOCX לא זמין. רענן את הדף ונסה שוב.');
+    return;
+  }
+  readCvFromUi();
+  try{
+    var blob=await window.PaamonimCvDocx.buildCvDocxBlob(cvState);
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    var raw=(cvState.fullName||'cv').replace(/[\\/:*?"<>|]+/g,'').trim()||'cv';
+    a.href=url;
+    a.download=raw+'-קורות-חיים.docx';
+    a.click();
+    URL.revokeObjectURL(url);
+  }catch(err){
+    console.error(err);
+    alert('שגיאה ביצירת הקובץ.');
+  }
+}
+
+function bootstrapCvPage(){
+  if(cvBootstrapped) return;
+  var saved=loadCvDraft();
+  cvState=saved||getCvMock();
+  writeCvToUi();
+  renderCvEditor();
+  renderCvPreview();
+  bindCvPageOnce();
+
+  var dl=document.getElementById('cv-btn-download-docx');
+  var sv=document.getElementById('cv-btn-save-draft');
+  var mock=document.getElementById('cv-btn-load-mock');
+  var addEdu=document.getElementById('cv-add-edu');
+  var addExp=document.getElementById('cv-add-exp');
+  var addSk=document.getElementById('cv-add-skill');
+  if(dl) dl.addEventListener('click',downloadCvDocx);
+  if(sv) sv.addEventListener('click',saveCvDraftToStorage);
+  if(mock) mock.addEventListener('click',function(){
+    cvState=cvClone(window.PaamonimCvDocx.CV_MOCK_STATE||getCvMock());
+    writeCvToUi();
+    renderCvEditor();
+    renderCvPreview();
+  });
+  if(addEdu) addEdu.addEventListener('click',function(){
+    readCvFromUi();
+    cvState.education.push({degree:'',institution:'',years:''});
+    renderCvEditor();
+    renderCvPreview();
+  });
+  if(addExp) addExp.addEventListener('click',function(){
+    readCvFromUi();
+    cvState.experience.push({company:'',role:'',period:'',bullets:[]});
+    renderCvEditor();
+    renderCvPreview();
+  });
+  if(addSk) addSk.addEventListener('click',function(){
+    readCvFromUi();
+    cvState.skills.push({name:'',level:3});
+    renderCvEditor();
+    renderCvPreview();
+  });
+  cvBootstrapped=true;
 }
 
 /* ═══ INIT ═══════════════════════════════════════ */
